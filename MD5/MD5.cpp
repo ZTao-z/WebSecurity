@@ -120,8 +120,7 @@ public:
     // 填充字符串
     vector<unsigned int> padding(string src) {
         // 以512位,64个字节为一组
-        unsigned int remain = (src.length() * 8) % 512 == 448? 512 : 448 - (src.length() * 8) % 512;
-        unsigned int num = ((remain + src.length() * 8) + 64) / 512;
+        unsigned int num = ((src.length() + 8) / 64) + 1;
         vector<unsigned int> rec(num*16);
         strlength = num*16;
         for(unsigned int i = 0; i < src.length(); i++){
@@ -129,9 +128,9 @@ public:
             rec[i>>2] |= (int)(src[i]) << ((i % 4) * 8);
         }
         // 补充1000...000
-        rec[src.length() >> 2] |= 0x80 << ((src.length() % 4)*8);
+        rec[src.length() >> 2] |= (0x80 << ((src.length() % 4)*8));
         // 填充原文长度
-        rec[rec.size()-2] = src.length() << 3;
+        rec[rec.size()-2] = (src.length() << 3);
         return rec;
     }
     // 整理输出
